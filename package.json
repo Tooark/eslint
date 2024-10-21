@@ -1,0 +1,45 @@
+{
+  "name": "@tooark/eslint",
+  "description": "Configuração de ESLint para projetos .js, .jsx, .ts e .tsx",
+  "version": "1.0.0",
+  "author": "Paulo Sergio de Freitas Junior",
+  "license": "BSD-3-Clause",
+  "private": false,
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tooark/eslint"
+  },
+  "peerDependencies": {
+    "typescript": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "eslint",
+    "typescript",
+    "javascript",
+    "react",
+    "node"
+  ],
+  "dependencies": {
+    "@types/node": "^22.7.7",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.10.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-n": "^17.11.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
+    "eslint-plugin-react": "^7.37.1",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-standard": "^4.1.0",
+    "prettier": "^3.3.3"
+  }
+}
