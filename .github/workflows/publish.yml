@@ -45,16 +45,13 @@ jobs:
           NEW_VERSION=$(node -p "require('./package.json').version")
           TAG_NAME="v$NEW_VERSION"
           if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
-            # Renomear a tag existente no repositório remoto
-            git tag -f "$TAG_NAME" # -f força a atualização da tag
-            git push origin "$TAG_NAME" --force # --force força o push da tag atualizada
-          else
-            git tag "$TAG_NAME"
-            git push origin "$TAG_NAME"
+            TAG_NAME="${TAG_NAME}-$(date +%s)"
+            git tag "$TAG_NAME" "v$NEW_VERSION"
+            git tag -d "v$NEW_VERSION"  
           fi
+          git tag "v$NEW_VERSION"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
-          git push origin "$TAG_NAME"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Tooark/eslint.git main --tags
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ./.npmrc
-          npm publish --access 
+          npm publish --access public
