@@ -1,7 +1,7 @@
 {
   "name": "@tooark/eslint",
   "description": "Configuração de ESLint para projetos .js, .jsx, .ts e .tsx",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Paulo Sergio de Freitas Junior",
   "license": "BSD-3-Clause",
   "private": false,
