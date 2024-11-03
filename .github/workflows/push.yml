@@ -33,6 +33,6 @@ jobs:
           if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
             git tag "v$NEW_VERSION"
             git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Tooark/eslint.git main --tags
-            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
             npm publish --access public
           fi
