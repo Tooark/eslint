@@ -44,6 +44,14 @@ jobs:
           fi
           NEW_VERSION=$(node -p "require('./package.json').version")
           TAG_NAME="v$NEW_VERSION"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
+            # Renomear a tag existente no repositório remoto
+            git tag -f "$TAG_NAME" # -f força a atualização da tag
+            git push origin "$TAG_NAME" --force # --force força o push da tag atualizada
+          else
+            git tag "$TAG_NAME"
+            git push origin "$TAG_NAME"
+          fi
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
