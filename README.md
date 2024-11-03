@@ -11,7 +11,7 @@ This package provides a ready-to-use ESLint configuration for projects using Jav
 To install the package, run the following command:
 
 ```bash
-npm i -D git+https://github.com/Tooark/eslint.git
+npm i -D github:Tooark/eslint
 ```
 
 ### React

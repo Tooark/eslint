@@ -1,10 +1,17 @@
-name: Pull Request for Publish to GitHub Packages
+name: Publish to GitHub Packages
 
 on:
+  push:
+    branches:
+      - main
   pull_request: 
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   publish:
@@ -28,16 +35,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
+          PUBLISHED_VERSION=$(npm view github:Tooark/eslint version)
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
-          PATCH_VERSION=${VERSION_PARTS[2]}
-          NEW_PATCH_VERSION=$((PATCH_VERSION + 1))
-          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$NEW_PATCH_VERSION"
-          npm version $NEW_VERSION --no-git-tag-version
+          if [ "$CURRENT_VERSION" == "$PUBLISHED_VERSION" ]; then
+            npm version patch --no-git-tag-version
+          fi
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          TAG_NAME="v$NEW_VERSION"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
+            TAG_NAME="${TAG_NAME}-$(date +%s)"
+            git tag "v$TAG_NAME" "v$NEW_VERSION"
+            git tag -d "v$NEW_VERSION"  
+          fi
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "Bump version to $NEW_VERSION"
           git tag "v$NEW_VERSION"
           git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Tooark/eslint.git main --tags
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
-          npm publish
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" > ~/.npmrc
+          npm publish --access public

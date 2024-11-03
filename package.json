@@ -1,14 +1,14 @@
 {
   "name": "@tooark/eslint",
   "description": "Configuração de ESLint para projetos .js, .jsx, .ts e .tsx",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Paulo Sergio de Freitas Junior",
   "license": "BSD-3-Clause",
   "private": false,
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Tooark/eslint"
+    "url": "git+https://github.com/Tooark/eslint.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
