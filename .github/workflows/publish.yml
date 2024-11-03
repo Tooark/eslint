@@ -44,7 +44,7 @@ jobs:
           fi
           NEW_VERSION=$(node -p "require('./package.json').version")
           TAG_NAME="v$NEW_VERSION"
-          if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME"; then
+          if git ls-remote --tags origin | grep -qw "refs/tags/$TAG_NAME"; then
             TAG_NAME="${TAG_NAME}-$(date +%s)"
             git tag "$TAG_NAME" "v$NEW_VERSION"
             git tag -d "v$NEW_VERSION"  
