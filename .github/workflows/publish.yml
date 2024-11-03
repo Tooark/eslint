@@ -35,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          PUBLISHED_VERSION=$(npm view @tooark/eslint version)
+          PUBLISHED_VERSION=$(npm view github:@tooark/eslint version)
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           if [ "$CURRENT_VERSION" == "$PUBLISHED_VERSION" ]; then
             npm version patch --no-git-tag-version
@@ -53,15 +53,3 @@ jobs:
           git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/Tooark/eslint.git main --tags
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" > ~/.npmrc
           npm publish --access public
-      
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.publish.outputs.TAG_NAME }}
-          release_name: Release ${{ steps.publish.outputs.NEW_VERSION }}
-          body: |
-            Release notes for version ${{ steps.publish.outputs.NEW_VERSION }}
-          draft: false
-          prerelease: false
