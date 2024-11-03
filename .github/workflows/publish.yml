@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "20"
           registry-url: "https://npm.pkg.github.com"
@@ -34,24 +34,37 @@ jobs:
 
       - name: Bump version and publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PUBLISHED_VERSION=$(npm view github:@tooark/eslint version)
+          # Configura o .npmrc para usar o GitHub Packages
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+          # Obtém a versão publicada no GitHub Packages
+          PUBLISHED_VERSION=$(npm show @tooark/eslint version || echo "0.0.0")
+          echo "Versão publicada: $PUBLISHED_VERSION"
+
+          # Obtém a versão atual do package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Versão atual: $CURRENT_VERSION"
+
+          # Compara as versões e incrementa se necessário
           if [ "$CURRENT_VERSION" == "$PUBLISHED_VERSION" ]; then
-            npm version patch --no-git-tag-version
+            echo "Versões são iguais. Incrementando versão..."
+            npm version patch -m "Bump version to %s [skip ci]"
+          else
+            echo "Versões são diferentes. Usando a versão atual."
           fi
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          TAG_NAME="v$NEW_VERSION"
-          if git ls-remote --tags origin | grep -qw "refs/tags/$TAG_NAME"; then
-            TAG_NAME="${TAG_NAME}-$(date +%s)"
-            git tag "$TAG_NAME" "v$NEW_VERSION"
-            git tag -d "v$NEW_VERSION"  
-          fi
-          git tag "v$NEW_VERSION"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Tooark/eslint.git main --tags
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ./.npmrc
+
+          # Configura informações do Git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Faz commit das mudanças de versão
+          git add package.json package-lock.json
+          git commit -m "Bump version to $(node -p "require('./package.json').version") [skip ci]"
+
+          # Faz push das mudanças e tags
+          git push origin HEAD:main --follow-tags
+
+          # Publica o pacote no GitHub Packages
           npm publish --access public
